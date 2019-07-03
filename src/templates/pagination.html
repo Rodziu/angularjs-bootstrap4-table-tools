@@ -1,0 +1,51 @@
+<!--
+  ~ AngularJS TableTools Plugin
+  ~  Copyright (c) 2016-2019 Rodziu <mateusz.rohde@gmail.com>
+  ~  License: MIT
+  -->
+<ng-transclude></ng-transclude>
+<div class="pull-right">
+	<ul class="pagination">
+		<li ng-class="{'disabled': vm.tableTools.pagination.page == 1}" class="page-item">
+			<a href="javascript:" ng-click="vm.tableTools.changePage(1)" title="{{::vm.tableTools.lang.first}}" class="page-link">
+				<i class="fa fa-angle-double-left"></i>
+			</a>
+		</li>
+		<li ng-class="{'disabled': vm.tableTools.pagination.page == 1}" class="page-item">
+			<a href="javascript:" ng-click="vm.tableTools.changePage('prev')" title="{{::vm.tableTools.lang.prev}}" class="page-link">
+				<i class="fa fa-angle-left"></i>
+			</a>
+		</li>
+		<li  ng-repeat="p in vm.tableTools.pagination.items" ng-class="{'active': p == vm.tableTools.pagination.page}"
+			class="page-item">
+			<a href="javascript:" ng-click="vm.tableTools.changePage(p)" class="page-link">{{p}}</a>
+		</li>
+		<li ng-class="{'disabled': vm.tableTools.pagination.page == vm.tableTools.pagination.pages
+		|| vm.tableTools.pagination.pages == 0}" class="page-item">
+			<a href="javascript:" ng-click="vm.tableTools.changePage('next')" title="{{::vm.tableTools.lang.next}}" class="page-link">
+				<i class="fa fa-angle-right"></i>
+			</a>
+		</li>
+		<li ng-class="{'disabled': vm.tableTools.pagination.page == vm.tableTools.pagination.pages
+		|| vm.tableTools.pagination.pages == 0}" class="page-item">
+			<a href="javascript:" ng-click="vm.tableTools.changePage(vm.tableTools.pagination.pages)"
+			   title="{{::vm.tableTools.lang.last}}" class="page-link">
+				<i class="fa fa-angle-double-right"></i>
+			</a>
+		</li>
+	</ul>
+</div>
+<div class="pagination-desc">
+	{{::vm.tableTools.lang.results}}
+	<span ng-switch="vm.tableTools.dataLength">
+		<span ng-switch-when="0">0</span>
+		<span ng-switch-default>
+			{{vm.tableTools.pagination.start}} - {{vm.tableTools.pagination.end}}
+			{{::vm.tableTools.lang.from}} {{vm.tableTools.filteredCount}}
+		</span>
+	</span>
+	<span ng-show="vm.tableTools.filteredCount !== vm.tableTools.dataLength">
+		({{::vm.tableTools.lang.filteredResults}} {{vm.tableTools.dataLength}})
+	</span>
+</div>
+<div class="clearfix"></div>

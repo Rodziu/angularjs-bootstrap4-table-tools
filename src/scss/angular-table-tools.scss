@@ -1,0 +1,100 @@
+/*!
+ * AngularJS TableTools Plugin
+ *  Copyright (c) 2016-2019 Rodziu <mateusz.rohde@gmail.com>
+ *  License: MIT
+ */
+
+@mixin transition($transition...) {
+  -webkit-transition: $transition;
+  -o-transition: $transition;
+  transition: $transition;
+}
+@mixin scale($ratio...) {
+  -webkit-transform: scale($ratio);
+  -ms-transform: scale($ratio); // IE9 only
+  -o-transform: scale($ratio);
+  transform: scale($ratio);
+}
+// pagination
+.pagination {
+  margin: 0;
+  a[ng-click] {
+    cursor: pointer;
+  }
+}
+.pagination-desc { line-height: 38px; }
+.tt-pagination-top {
+  padding-top: 15px;
+  display: block;
+  .tt-export {
+    margin-left: 5px;
+  }
+}
+//.tt-export {
+//  .checkbox-inline {
+//    margin-left: 10px;
+//    width: 130px;
+//    max-width: 130px;
+//    white-space: nowrap;
+//    overflow: hidden;
+//    text-overflow: ellipsis
+//  }
+//  .checkbox {
+//    margin-left:10px;
+//  }
+//}
+// tables
+.table {
+  thead, tbody, tfoot {
+    > tr > th, > tr > td {
+      vertical-align: middle;
+    }
+  }
+  &.table-rowclick tbody tr {
+    cursor: pointer;
+  }
+  thead {
+    th {
+      position: relative;
+      background-image: none !important;
+      padding-right: 12px !important;
+      &.text-center > .tt-select-all {
+        margin-right: -7px;
+      }
+      &[data-tt-sort], &[tt-sort] {
+        cursor: pointer;
+        &:after{
+          position: absolute;
+          top: 50%;
+          margin-top: -9px;
+          right: 0;
+          display: block;
+          font-family: FontAwesome, serif;
+          content: "\f0dc";
+          color: #ddd;
+        }
+      }
+      &.sorting-asc:after {
+        content: "\f0de";
+        color: inherit;
+      }
+      &.sorting-desc:after {
+        content: "\f0dd";
+        color: inherit;
+      }
+    }
+  }
+  td.actions, th.actions {
+    white-space: nowrap;
+    a {
+      font-size: 18px; display: inline-block; @include transition(all 300ms ease-in-out 0s);
+      &:hover {
+        text-decoration: none; @include scale(1.3);
+      }
+      & + a {
+        margin-left: 7px;
+      }
+    }
+    > i { font-size: 18px; }
+  }
+}
