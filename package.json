@@ -1,6 +1,6 @@
 {
   "name": "angularjs-bootstrap4-table-tools",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "AngularJS TableTools Plugin",
   "main": "dist/angularjs-bootstrap4-table-tools.js",
   "scripts": {
@@ -40,6 +40,7 @@
     "karma-firefox-launcher": "^1.1.0",
     "karma-jasmine": "^2.0.1",
     "lodash": "^4.17.13",
+    "lodash.template": "^4.5.0",
     "ng-annotate-patched": "^1.9.0"
   }
 }
