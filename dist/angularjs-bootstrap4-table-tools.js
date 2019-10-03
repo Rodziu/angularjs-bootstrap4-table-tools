@@ -38,7 +38,7 @@ angular.module('tableTools.search', []);
  *  License: MIT
  */
 
-angular.module('tableTools.select', []);
+angular.module('tableTools.sort', []);
 
 /*
  * AngularJS TableTools Plugin
@@ -46,7 +46,7 @@ angular.module('tableTools.select', []);
  *  License: MIT
  */
 
-angular.module('tableTools.sort', []);
+angular.module('tableTools.select', []);
 
 /*
 * AngularJS TableTools Plugin
@@ -183,6 +183,9 @@ angular.module('tableTools.sort', []);
 								ctrl.data = result.data;
 								ctrl.dataLength = result.count;
 								ctrl.filteredCount = result.countFiltered;
+                if (ctrl.pagination.page > 1 && !ctrl.data.length) {
+                  ctrl.changePage(1);
+                }
 							}
 						}).catch(function(e){
 							$log.error(e);
@@ -960,147 +963,6 @@ angular.module('tableTools.search').component('ttSearch', {
 !function(){
 	'use strict';
 
-	function ttSelectAllDirective(){
-		return {
-			restrict: 'AE',
-			require: '^tableTools',
-			template: '<input type="checkbox" class="tt-select-all" ng-model="tableTools.ttSelect.selectAll" ' +
-				'ng-change="tableTools.ttSelect.changeAll()"/>',
-			replace: true
-		};
-	}
-
-	angular.module('tableTools.select').directive('ttSelectAll', ttSelectAllDirective);
-
-}();
-
-/*
- * AngularJS TableTools Plugin
- *  Copyright (c) 2016-2019 Rodziu <mateusz.rohde@gmail.com>
- *  License: MIT
- */
-!function(){
-	'use strict';
-
-	function ttSelectDirective(){
-		return {
-			restrict: 'AE',
-			require: '^tableTools',
-			template: '<input type="checkbox" ng-model="row.ttSelected" ng-disabled="!row.ttSelectable" ' +
-				'ng-change="tableTools.ttSelect.change()"/>',
-			replace: true,
-			scope: {
-				row: '=ttSelect'
-			},
-			link(scope, element, attr, tableTools){
-				/**
-				 * Reference to tableTools controller.
-				 */
-				scope.tableTools = tableTools;
-				if(angular.isUndefined(scope.row.ttSelectable)){
-					scope.row['ttSelectable'] = true;
-				}
-			}
-		};
-	}
-
-	angular.module('tableTools.select').directive('ttSelect', ttSelectDirective);
-}();
-
-/*
- * AngularJS TableTools Plugin
- *  Copyright (c) 2016-2019 Rodziu <mateusz.rohde@gmail.com>
- *  License: MIT
- */
-!function(){
-	'use strict';
-
-	function ttSelectService(){
-		return function(tableTools){
-			const self = this;
-			self.selectAll = false;
-			self.changeAll = function(){
-				for(let d = 0; d < tableTools.data.length; d++){
-					tableTools.data[d].ttSelected = tableTools.data[d].ttSelectable !== false
-						? self.selectAll : false;
-				}
-			};
-			self.change = function(){
-				for(let d = 0; d < tableTools.data.length; d++){
-					if(!tableTools.data[d].ttSelected && tableTools.data[d].ttSelectable !== false){
-						self.selectAll = false;
-						return;
-					}
-				}
-				self.selectAll = true;
-			};
-			self.getSelected = function(){
-				const selected = [];
-				for(let d = 0; d < tableTools.data.length; d++){
-					if(tableTools.data[d].ttSelected && tableTools.data[d].ttSelectable !== false){
-						selected.push(tableTools.data[d]);
-					}
-				}
-				return selected;
-			};
-			self.hasSelected = function(){
-				return self.getSelected().length !== 0;
-			};
-		};
-	}
-
-	/**
-	 * @ngdoc factory
-	 * @name ttSelect
-	 */
-	angular.module('tableTools.select').factory('ttSelect', ttSelectService);
-}();
-
-/*
- * AngularJS TableTools Plugin
- *  Copyright (c) 2016-2019 Rodziu <mateusz.rohde@gmail.com>
- *  License: MIT
- */
-!function(){
-	'use strict';
-
-	function ttSelectedClickDirective(){
-		return {
-			restrict: 'AE',
-			require: '^tableTools',
-			replace: true,
-			scope: {
-				ttSelectedClick: '<'
-			},
-			link(scope, element, attr, tableTools){
-				scope.isDisabled = function(){
-					return !tableTools.ttSelect.hasSelected();
-				};
-				scope.$watch('isDisabled()', function(nV){
-					element.attr('disabled', nV);
-				});
-				element.on('click', function(){
-					const selected = tableTools.ttSelect.getSelected();
-					if(selected.length){
-						scope.ttSelectedClick(selected);
-						scope.$apply();
-					}
-				});
-			}
-		};
-	}
-
-	angular.module('tableTools.select').directive('ttSelectedClick', ttSelectedClickDirective);
-}();
-
-/*
- * AngularJS TableTools Plugin
- *  Copyright (c) 2016-2019 Rodziu <mateusz.rohde@gmail.com>
- *  License: MIT
- */
-!function(){
-	'use strict';
-
 	function ttSortDirective(){
 		return {
 			restrict: 'A',
@@ -1317,6 +1179,147 @@ angular.module('tableTools.search').component('ttSearch', {
 	 * @name ttSort
 	 */
 	angular.module('tableTools.sort').factory('ttSort', ttSortService);
+}();
+
+/*
+ * AngularJS TableTools Plugin
+ *  Copyright (c) 2016-2019 Rodziu <mateusz.rohde@gmail.com>
+ *  License: MIT
+ */
+!function(){
+	'use strict';
+
+	function ttSelectAllDirective(){
+		return {
+			restrict: 'AE',
+			require: '^tableTools',
+			template: '<input type="checkbox" class="tt-select-all" ng-model="tableTools.ttSelect.selectAll" ' +
+				'ng-change="tableTools.ttSelect.changeAll()"/>',
+			replace: true
+		};
+	}
+
+	angular.module('tableTools.select').directive('ttSelectAll', ttSelectAllDirective);
+
+}();
+
+/*
+ * AngularJS TableTools Plugin
+ *  Copyright (c) 2016-2019 Rodziu <mateusz.rohde@gmail.com>
+ *  License: MIT
+ */
+!function(){
+	'use strict';
+
+	function ttSelectDirective(){
+		return {
+			restrict: 'AE',
+			require: '^tableTools',
+			template: '<input type="checkbox" ng-model="row.ttSelected" ng-disabled="!row.ttSelectable" ' +
+				'ng-change="tableTools.ttSelect.change()"/>',
+			replace: true,
+			scope: {
+				row: '=ttSelect'
+			},
+			link(scope, element, attr, tableTools){
+				/**
+				 * Reference to tableTools controller.
+				 */
+				scope.tableTools = tableTools;
+				if(angular.isUndefined(scope.row.ttSelectable)){
+					scope.row['ttSelectable'] = true;
+				}
+			}
+		};
+	}
+
+	angular.module('tableTools.select').directive('ttSelect', ttSelectDirective);
+}();
+
+/*
+ * AngularJS TableTools Plugin
+ *  Copyright (c) 2016-2019 Rodziu <mateusz.rohde@gmail.com>
+ *  License: MIT
+ */
+!function(){
+	'use strict';
+
+	function ttSelectService(){
+		return function(tableTools){
+			const self = this;
+			self.selectAll = false;
+			self.changeAll = function(){
+				for(let d = 0; d < tableTools.data.length; d++){
+					tableTools.data[d].ttSelected = tableTools.data[d].ttSelectable !== false
+						? self.selectAll : false;
+				}
+			};
+			self.change = function(){
+				for(let d = 0; d < tableTools.data.length; d++){
+					if(!tableTools.data[d].ttSelected && tableTools.data[d].ttSelectable !== false){
+						self.selectAll = false;
+						return;
+					}
+				}
+				self.selectAll = true;
+			};
+			self.getSelected = function(){
+				const selected = [];
+				for(let d = 0; d < tableTools.data.length; d++){
+					if(tableTools.data[d].ttSelected && tableTools.data[d].ttSelectable !== false){
+						selected.push(tableTools.data[d]);
+					}
+				}
+				return selected;
+			};
+			self.hasSelected = function(){
+				return self.getSelected().length !== 0;
+			};
+		};
+	}
+
+	/**
+	 * @ngdoc factory
+	 * @name ttSelect
+	 */
+	angular.module('tableTools.select').factory('ttSelect', ttSelectService);
+}();
+
+/*
+ * AngularJS TableTools Plugin
+ *  Copyright (c) 2016-2019 Rodziu <mateusz.rohde@gmail.com>
+ *  License: MIT
+ */
+!function(){
+	'use strict';
+
+	function ttSelectedClickDirective(){
+		return {
+			restrict: 'AE',
+			require: '^tableTools',
+			replace: true,
+			scope: {
+				ttSelectedClick: '<'
+			},
+			link(scope, element, attr, tableTools){
+				scope.isDisabled = function(){
+					return !tableTools.ttSelect.hasSelected();
+				};
+				scope.$watch('isDisabled()', function(nV){
+					element.attr('disabled', nV);
+				});
+				element.on('click', function(){
+					const selected = tableTools.ttSelect.getSelected();
+					if(selected.length){
+						scope.ttSelectedClick(selected);
+						scope.$apply();
+					}
+				});
+			}
+		};
+	}
+
+	angular.module('tableTools.select').directive('ttSelectedClick', ttSelectedClickDirective);
 }();
 
 angular.module('tableTools').run(['$templateCache', function($templateCache) {$templateCache.put('src/templates/export.html','<div><button class="btn btn-outline-primary" ng-click="vm.showExport()">{{::vm.tableTools.lang.export}}</button><div class="modal fade" bs-modal="vm.modal"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">{{::vm.tableTools.lang.export}}</h5><button type="button" class="close" dismiss aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body"><div class="form-group"><label><strong>{{::vm.tableTools.lang.exportChooseColumns}}:</strong> <a href="javascript:" ng-click="vm.flipSelection()" class="badge badge-primary">{{::vm.tableTools.lang.flipSelection}}</a></label><div><div class="form-check form-check-inline" ng-repeat="c in vm.columns"><input class="form-check-input" type="checkbox" id="tt-export-{{::$id}}" ng-model="c.exp"> <label class="form-check-label" for="tt-export-{{::$id}}" title="c.txt">{{::c.txt}}</label></div></div><div><div class="form-check mt-2"><input class="form-check-input" type="checkbox" id="tt-export-columns-{{::$id}}" ng-model="vm.config.columnNames"> <label class="form-check-label" for="tt-export-columns-{{::$id}}">{{::vm.tableTools.lang.exportColumnNames}}</label></div></div></div><div class="form-group"><label><strong>{{::vm.tableTools.lang.exportSeparator}}</strong></label><div><div class="form-check form-check-inline" ng-repeat="s in vm.separators"><input class="form-check-input" type="radio" id="tt-export-separator-{{::$id}}" ng-model="vm.config.separator" ng-value="s.separator" ng-trim="false"> <label class="form-check-label" for="tt-export-separator-{{::$id}}">{{::s.lang}}</label></div></div></div></div><div class="modal-footer"><button type="button" class="btn btn-outline-primary" ng-repeat="(k, e) in vm.exportTypes" ng-click="vm.doExport(k, e)" ng-disabled="vm.exporting">{{::e.lang}} <span ng-if="vm.exporting == k"><i class="fa fa-spinner fa-spin"></i></span></button></div></div></div></div></div>');

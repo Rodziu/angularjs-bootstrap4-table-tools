@@ -131,6 +131,9 @@
 								ctrl.data = result.data;
 								ctrl.dataLength = result.count;
 								ctrl.filteredCount = result.countFiltered;
+                if (ctrl.pagination.page > 1 && !ctrl.data.length) {
+                  ctrl.changePage(1);
+                }
 							}
 						}).catch(function(e){
 							$log.error(e);
