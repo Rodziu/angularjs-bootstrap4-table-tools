@@ -38,7 +38,7 @@ angular.module('tableTools.search', []);
  *  License: MIT
  */
 
-angular.module('tableTools.sort', []);
+angular.module('tableTools.select', []);
 
 /*
  * AngularJS TableTools Plugin
@@ -46,7 +46,7 @@ angular.module('tableTools.sort', []);
  *  License: MIT
  */
 
-angular.module('tableTools.select', []);
+angular.module('tableTools.sort', []);
 
 /*
 * AngularJS TableTools Plugin
@@ -342,24 +342,46 @@ angular.module('tableTools.select', []);
 
 	/**
 	 * @ngdoc component
-	 * @name ttHeader
-	 * @description collection of PerPage, search, export
+	 * @name ttFooter
 	 */
-	angular.module('tableTools').component('ttHeader', {
+	angular.module('tableTools').component('ttFooter', {
 		require: {
 			tableTools: '^tableTools'
 		},
-		template: '<div>' +
-			'<div class="form-inline">' +
-			'<tt-per-page></tt-per-page>' +
-			'<tt-loading></tt-loading>' +
-			'<tt-search class="ml-auto"></tt-search>' +
-			'</div>' +
-			'<tt-pagination class="tt-pagination-top">' +
-			'<div class="pull-right tt-export"><tt-export></tt-export></div>' +
-			'</tt-pagination>' +
-			'</div>'
+		template: '<div class="row">' +
+        '<tt-results-count class="col align-self-center"></tt-results-count>' +
+        '<tt-pagination class="col col-auto"></tt-pagination>' +
+        '</div>'
 	});
+}();
+
+/*
+ * AngularJS TableTools Plugin
+ *  Copyright (c) 2016-2019 Rodziu <mateusz.rohde@gmail.com>
+ *  License: MIT
+ */
+!function() {
+  'use strict';
+
+  /**
+   * @ngdoc component
+   * @name ttHeader
+   */
+  angular.module('tableTools').component('ttHeader', {
+    require: {
+      tableTools: '^tableTools',
+    },
+    template: '<div class="form-inline">' +
+        '<tt-per-page></tt-per-page>' +
+        '<tt-loading></tt-loading>' +
+        '<tt-search class="ml-auto"></tt-search>' +
+        '</div>' +
+        '<div class="row mt-3">' +
+        '<tt-results-count class="col align-self-center"></tt-results-count>' +
+        '<tt-pagination class="col col-auto pr-0"></tt-pagination>' +
+        '<tt-export class="col col-auto pl-2"></tt-export>' +
+        '</div>'
+  });
 }();
 
 /*
@@ -383,6 +405,21 @@ angular.module('tableTools.select', []);
 		template: '<span ng-show="vm.tableTools.loading">&nbsp;<i class="fa fa-spinner fa-spin fa-lg"></i></span>',
 	});
 }();
+
+/*
+ * AngularJS TableTools Plugin
+ *  Copyright (c) 2016-2019 Rodziu <mateusz.rohde@gmail.com>
+ *  License: MIT
+ */
+
+angular.module('tableTools.pagination').component('ttResultsCount', {
+  require: {
+    tableTools: '^tableTools'
+  },
+  controllerAs: 'vm',
+  transclude: true,
+  templateUrl: 'src/templates/results-count.html'
+});
 
 /*
  * AngularJS TableTools Plugin
@@ -963,6 +1000,147 @@ angular.module('tableTools.search').component('ttSearch', {
 !function(){
 	'use strict';
 
+	function ttSelectAllDirective(){
+		return {
+			restrict: 'AE',
+			require: '^tableTools',
+			template: '<input type="checkbox" class="tt-select-all" ng-model="tableTools.ttSelect.selectAll" ' +
+				'ng-change="tableTools.ttSelect.changeAll()"/>',
+			replace: true
+		};
+	}
+
+	angular.module('tableTools.select').directive('ttSelectAll', ttSelectAllDirective);
+
+}();
+
+/*
+ * AngularJS TableTools Plugin
+ *  Copyright (c) 2016-2019 Rodziu <mateusz.rohde@gmail.com>
+ *  License: MIT
+ */
+!function(){
+	'use strict';
+
+	function ttSelectDirective(){
+		return {
+			restrict: 'AE',
+			require: '^tableTools',
+			template: '<input type="checkbox" ng-model="row.ttSelected" ng-disabled="!row.ttSelectable" ' +
+				'ng-change="tableTools.ttSelect.change()"/>',
+			replace: true,
+			scope: {
+				row: '=ttSelect'
+			},
+			link(scope, element, attr, tableTools){
+				/**
+				 * Reference to tableTools controller.
+				 */
+				scope.tableTools = tableTools;
+				if(angular.isUndefined(scope.row.ttSelectable)){
+					scope.row['ttSelectable'] = true;
+				}
+			}
+		};
+	}
+
+	angular.module('tableTools.select').directive('ttSelect', ttSelectDirective);
+}();
+
+/*
+ * AngularJS TableTools Plugin
+ *  Copyright (c) 2016-2019 Rodziu <mateusz.rohde@gmail.com>
+ *  License: MIT
+ */
+!function(){
+	'use strict';
+
+	function ttSelectService(){
+		return function(tableTools){
+			const self = this;
+			self.selectAll = false;
+			self.changeAll = function(){
+				for(let d = 0; d < tableTools.data.length; d++){
+					tableTools.data[d].ttSelected = tableTools.data[d].ttSelectable !== false
+						? self.selectAll : false;
+				}
+			};
+			self.change = function(){
+				for(let d = 0; d < tableTools.data.length; d++){
+					if(!tableTools.data[d].ttSelected && tableTools.data[d].ttSelectable !== false){
+						self.selectAll = false;
+						return;
+					}
+				}
+				self.selectAll = true;
+			};
+			self.getSelected = function(){
+				const selected = [];
+				for(let d = 0; d < tableTools.data.length; d++){
+					if(tableTools.data[d].ttSelected && tableTools.data[d].ttSelectable !== false){
+						selected.push(tableTools.data[d]);
+					}
+				}
+				return selected;
+			};
+			self.hasSelected = function(){
+				return self.getSelected().length !== 0;
+			};
+		};
+	}
+
+	/**
+	 * @ngdoc factory
+	 * @name ttSelect
+	 */
+	angular.module('tableTools.select').factory('ttSelect', ttSelectService);
+}();
+
+/*
+ * AngularJS TableTools Plugin
+ *  Copyright (c) 2016-2019 Rodziu <mateusz.rohde@gmail.com>
+ *  License: MIT
+ */
+!function(){
+	'use strict';
+
+	function ttSelectedClickDirective(){
+		return {
+			restrict: 'AE',
+			require: '^tableTools',
+			replace: true,
+			scope: {
+				ttSelectedClick: '<'
+			},
+			link(scope, element, attr, tableTools){
+				scope.isDisabled = function(){
+					return !tableTools.ttSelect.hasSelected();
+				};
+				scope.$watch('isDisabled()', function(nV){
+					element.attr('disabled', nV);
+				});
+				element.on('click', function(){
+					const selected = tableTools.ttSelect.getSelected();
+					if(selected.length){
+						scope.ttSelectedClick(selected);
+						scope.$apply();
+					}
+				});
+			}
+		};
+	}
+
+	angular.module('tableTools.select').directive('ttSelectedClick', ttSelectedClickDirective);
+}();
+
+/*
+ * AngularJS TableTools Plugin
+ *  Copyright (c) 2016-2019 Rodziu <mateusz.rohde@gmail.com>
+ *  License: MIT
+ */
+!function(){
+	'use strict';
+
 	function ttSortDirective(){
 		return {
 			restrict: 'A',
@@ -1181,146 +1359,6 @@ angular.module('tableTools.search').component('ttSearch', {
 	angular.module('tableTools.sort').factory('ttSort', ttSortService);
 }();
 
-/*
- * AngularJS TableTools Plugin
- *  Copyright (c) 2016-2019 Rodziu <mateusz.rohde@gmail.com>
- *  License: MIT
- */
-!function(){
-	'use strict';
-
-	function ttSelectAllDirective(){
-		return {
-			restrict: 'AE',
-			require: '^tableTools',
-			template: '<input type="checkbox" class="tt-select-all" ng-model="tableTools.ttSelect.selectAll" ' +
-				'ng-change="tableTools.ttSelect.changeAll()"/>',
-			replace: true
-		};
-	}
-
-	angular.module('tableTools.select').directive('ttSelectAll', ttSelectAllDirective);
-
-}();
-
-/*
- * AngularJS TableTools Plugin
- *  Copyright (c) 2016-2019 Rodziu <mateusz.rohde@gmail.com>
- *  License: MIT
- */
-!function(){
-	'use strict';
-
-	function ttSelectDirective(){
-		return {
-			restrict: 'AE',
-			require: '^tableTools',
-			template: '<input type="checkbox" ng-model="row.ttSelected" ng-disabled="!row.ttSelectable" ' +
-				'ng-change="tableTools.ttSelect.change()"/>',
-			replace: true,
-			scope: {
-				row: '=ttSelect'
-			},
-			link(scope, element, attr, tableTools){
-				/**
-				 * Reference to tableTools controller.
-				 */
-				scope.tableTools = tableTools;
-				if(angular.isUndefined(scope.row.ttSelectable)){
-					scope.row['ttSelectable'] = true;
-				}
-			}
-		};
-	}
-
-	angular.module('tableTools.select').directive('ttSelect', ttSelectDirective);
-}();
-
-/*
- * AngularJS TableTools Plugin
- *  Copyright (c) 2016-2019 Rodziu <mateusz.rohde@gmail.com>
- *  License: MIT
- */
-!function(){
-	'use strict';
-
-	function ttSelectService(){
-		return function(tableTools){
-			const self = this;
-			self.selectAll = false;
-			self.changeAll = function(){
-				for(let d = 0; d < tableTools.data.length; d++){
-					tableTools.data[d].ttSelected = tableTools.data[d].ttSelectable !== false
-						? self.selectAll : false;
-				}
-			};
-			self.change = function(){
-				for(let d = 0; d < tableTools.data.length; d++){
-					if(!tableTools.data[d].ttSelected && tableTools.data[d].ttSelectable !== false){
-						self.selectAll = false;
-						return;
-					}
-				}
-				self.selectAll = true;
-			};
-			self.getSelected = function(){
-				const selected = [];
-				for(let d = 0; d < tableTools.data.length; d++){
-					if(tableTools.data[d].ttSelected && tableTools.data[d].ttSelectable !== false){
-						selected.push(tableTools.data[d]);
-					}
-				}
-				return selected;
-			};
-			self.hasSelected = function(){
-				return self.getSelected().length !== 0;
-			};
-		};
-	}
-
-	/**
-	 * @ngdoc factory
-	 * @name ttSelect
-	 */
-	angular.module('tableTools.select').factory('ttSelect', ttSelectService);
-}();
-
-/*
- * AngularJS TableTools Plugin
- *  Copyright (c) 2016-2019 Rodziu <mateusz.rohde@gmail.com>
- *  License: MIT
- */
-!function(){
-	'use strict';
-
-	function ttSelectedClickDirective(){
-		return {
-			restrict: 'AE',
-			require: '^tableTools',
-			replace: true,
-			scope: {
-				ttSelectedClick: '<'
-			},
-			link(scope, element, attr, tableTools){
-				scope.isDisabled = function(){
-					return !tableTools.ttSelect.hasSelected();
-				};
-				scope.$watch('isDisabled()', function(nV){
-					element.attr('disabled', nV);
-				});
-				element.on('click', function(){
-					const selected = tableTools.ttSelect.getSelected();
-					if(selected.length){
-						scope.ttSelectedClick(selected);
-						scope.$apply();
-					}
-				});
-			}
-		};
-	}
-
-	angular.module('tableTools.select').directive('ttSelectedClick', ttSelectedClickDirective);
-}();
-
 angular.module('tableTools').run(['$templateCache', function($templateCache) {$templateCache.put('src/templates/export.html','<div><button class="btn btn-outline-primary" ng-click="vm.showExport()">{{::vm.tableTools.lang.export}}</button><div class="modal fade" bs-modal="vm.modal"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">{{::vm.tableTools.lang.export}}</h5><button type="button" class="close" dismiss aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body"><div class="form-group"><label><strong>{{::vm.tableTools.lang.exportChooseColumns}}:</strong> <a href="javascript:" ng-click="vm.flipSelection()" class="badge badge-primary">{{::vm.tableTools.lang.flipSelection}}</a></label><div><div class="form-check form-check-inline" ng-repeat="c in vm.columns"><input class="form-check-input" type="checkbox" id="tt-export-{{::$id}}" ng-model="c.exp"> <label class="form-check-label" for="tt-export-{{::$id}}" title="c.txt">{{::c.txt}}</label></div></div><div><div class="form-check mt-2"><input class="form-check-input" type="checkbox" id="tt-export-columns-{{::$id}}" ng-model="vm.config.columnNames"> <label class="form-check-label" for="tt-export-columns-{{::$id}}">{{::vm.tableTools.lang.exportColumnNames}}</label></div></div></div><div class="form-group"><label><strong>{{::vm.tableTools.lang.exportSeparator}}</strong></label><div><div class="form-check form-check-inline" ng-repeat="s in vm.separators"><input class="form-check-input" type="radio" id="tt-export-separator-{{::$id}}" ng-model="vm.config.separator" ng-value="s.separator" ng-trim="false"> <label class="form-check-label" for="tt-export-separator-{{::$id}}">{{::s.lang}}</label></div></div></div></div><div class="modal-footer"><button type="button" class="btn btn-outline-primary" ng-repeat="(k, e) in vm.exportTypes" ng-click="vm.doExport(k, e)" ng-disabled="vm.exporting">{{::e.lang}} <span ng-if="vm.exporting == k"><i class="fa fa-spinner fa-spin"></i></span></button></div></div></div></div></div>');
-$templateCache.put('src/templates/pagination.html','<ng-transclude></ng-transclude><div class="pull-right"><ul class="pagination"><li ng-class="{\'disabled\': vm.tableTools.pagination.page == 1}" class="page-item"><a href="javascript:" ng-click="vm.tableTools.changePage(1)" title="{{::vm.tableTools.lang.first}}" class="page-link"><i class="fa fa-angle-double-left"></i></a></li><li ng-class="{\'disabled\': vm.tableTools.pagination.page == 1}" class="page-item"><a href="javascript:" ng-click="vm.tableTools.changePage(\'prev\')" title="{{::vm.tableTools.lang.prev}}" class="page-link"><i class="fa fa-angle-left"></i></a></li><li ng-repeat="p in vm.tableTools.pagination.items" ng-class="{\'active\': p == vm.tableTools.pagination.page}" class="page-item"><a href="javascript:" ng-click="vm.tableTools.changePage(p)" class="page-link">{{p}}</a></li><li ng-class="{\'disabled\': vm.tableTools.pagination.page == vm.tableTools.pagination.pages || vm.tableTools.pagination.pages == 0}" class="page-item"><a href="javascript:" ng-click="vm.tableTools.changePage(\'next\')" title="{{::vm.tableTools.lang.next}}" class="page-link"><i class="fa fa-angle-right"></i></a></li><li ng-class="{\'disabled\': vm.tableTools.pagination.page == vm.tableTools.pagination.pages || vm.tableTools.pagination.pages == 0}" class="page-item"><a href="javascript:" ng-click="vm.tableTools.changePage(vm.tableTools.pagination.pages)" title="{{::vm.tableTools.lang.last}}" class="page-link"><i class="fa fa-angle-double-right"></i></a></li></ul></div><div class="pagination-desc">{{::vm.tableTools.lang.results}} <span ng-switch="vm.tableTools.dataLength"><span ng-switch-when="0">0</span> <span ng-switch-default>{{vm.tableTools.pagination.start}} - {{vm.tableTools.pagination.end}} {{::vm.tableTools.lang.from}} {{vm.tableTools.filteredCount}}</span></span> <span ng-show="vm.tableTools.filteredCount !== vm.tableTools.dataLength">({{::vm.tableTools.lang.filteredResults}} {{vm.tableTools.dataLength}})</span></div><div class="clearfix"></div>');}]);
+$templateCache.put('src/templates/pagination.html','<ul class="pagination"><li ng-class="{\'disabled\': vm.tableTools.pagination.page == 1}" class="page-item"><a href="javascript:" ng-click="vm.tableTools.changePage(1)" title="{{::vm.tableTools.lang.first}}" class="page-link"><i class="fa fa-angle-double-left"></i></a></li><li ng-class="{\'disabled\': vm.tableTools.pagination.page == 1}" class="page-item"><a href="javascript:" ng-click="vm.tableTools.changePage(\'prev\')" title="{{::vm.tableTools.lang.prev}}" class="page-link"><i class="fa fa-angle-left"></i></a></li><li ng-repeat="p in vm.tableTools.pagination.items" ng-class="{\'active\': p == vm.tableTools.pagination.page}" class="page-item"><a href="javascript:" ng-click="vm.tableTools.changePage(p)" class="page-link">{{p}}</a></li><li ng-class="{\'disabled\': vm.tableTools.pagination.page == vm.tableTools.pagination.pages || vm.tableTools.pagination.pages == 0}" class="page-item"><a href="javascript:" ng-click="vm.tableTools.changePage(\'next\')" title="{{::vm.tableTools.lang.next}}" class="page-link"><i class="fa fa-angle-right"></i></a></li><li ng-class="{\'disabled\': vm.tableTools.pagination.page == vm.tableTools.pagination.pages || vm.tableTools.pagination.pages == 0}" class="page-item"><a href="javascript:" ng-click="vm.tableTools.changePage(vm.tableTools.pagination.pages)" title="{{::vm.tableTools.lang.last}}" class="page-link"><i class="fa fa-angle-double-right"></i></a></li></ul>');
+$templateCache.put('src/templates/results-count.html','<div>{{::vm.tableTools.lang.results}} <span ng-switch="vm.tableTools.dataLength"><span ng-switch-when="0">0</span> <span ng-switch-default>{{vm.tableTools.pagination.start}} - {{vm.tableTools.pagination.end}} {{::vm.tableTools.lang.from}} {{vm.tableTools.filteredCount}}</span></span> <span ng-show="vm.tableTools.filteredCount !== vm.tableTools.dataLength">({{::vm.tableTools.lang.filteredResults}} {{vm.tableTools.dataLength}})</span></div>');}]);

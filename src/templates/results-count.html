@@ -1,0 +1,18 @@
+<!--
+  ~ AngularJS TableTools Plugin
+  ~  Copyright (c) 2016-2019 Rodziu <mateusz.rohde@gmail.com>
+  ~  License: MIT
+  -->
+<div>
+	{{::vm.tableTools.lang.results}}
+	<span ng-switch="vm.tableTools.dataLength">
+		<span ng-switch-when="0">0</span>
+		<span ng-switch-default>
+			{{vm.tableTools.pagination.start}} - {{vm.tableTools.pagination.end}}
+			{{::vm.tableTools.lang.from}} {{vm.tableTools.filteredCount}}
+		</span>
+	</span>
+	<span ng-show="vm.tableTools.filteredCount !== vm.tableTools.dataLength">
+		({{::vm.tableTools.lang.filteredResults}} {{vm.tableTools.dataLength}})
+	</span>
+</div>
