@@ -35,7 +35,8 @@
             tabulator: 'Tabulator',
             copy: 'Kopiuj',
             csv: 'CSV',
-            copiedToClipboard: 'Skopiowano do schowka'
+            copiedToClipboard: 'Skopiowano do schowka',
+            noResults: 'Nie znaleziono żadnych wyników!'
         };
         this.exportTypes = {
             copy: {
