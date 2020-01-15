@@ -15,7 +15,9 @@
             },
             controllerAs: 'vm',
             bindToController: true,
-            controller: angular.noop,
+            controller: () => {
+            },
+            scope: true,
             template: '<td colspan="100%" ng-if="!vm.tableTools.data.length">'
                 + '<tt-loading></tt-loading>'
                 + '<span ng-if="!vm.tableTools.loading">{{::vm.tableTools.lang.noResults}}</span>'
