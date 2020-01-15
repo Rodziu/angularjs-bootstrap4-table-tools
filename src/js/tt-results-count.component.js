@@ -5,10 +5,10 @@
  */
 
 angular.module('tableTools.pagination').component('ttResultsCount', {
-  require: {
-    tableTools: '^tableTools'
-  },
-  controllerAs: 'vm',
-  transclude: true,
-  templateUrl: 'src/templates/results-count.html'
+    require: {
+        tableTools: '^tableTools'
+    },
+    controllerAs: 'vm',
+    transclude: true,
+    templateUrl: 'src/templates/results-count.html'
 });

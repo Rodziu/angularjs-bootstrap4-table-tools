@@ -36,12 +36,12 @@
 			'src/js/**/*.module.js',
 			'src/js/**/*.js'
 		])
-			.pipe(ngAnnotate())
 			.pipe(sourcemaps.init())
 			.pipe(concat(pkg.name + '.js'))
 			.pipe(eslint())
 			.pipe(eslint.format())
 			.pipe(eslint.failOnError())
+			.pipe(ngAnnotate())
 			.pipe(gap.appendFile('dist/templates.js'))
 			.pipe(gulp.dest('dist'))
 			.pipe(rename(pkg.name + '.min.js'))

@@ -5,5 +5,5 @@
  */
 
 angular.module('tableTools', [
-	'tableTools.search', 'tableTools.pagination', 'tableTools.export', 'tableTools.select', 'tableTools.sort'
+    'tableTools.search', 'tableTools.pagination', 'tableTools.export', 'tableTools.select', 'tableTools.sort'
 ]);
