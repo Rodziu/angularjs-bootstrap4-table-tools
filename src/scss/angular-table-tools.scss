@@ -37,9 +37,6 @@
       position: relative;
       background-image: none !important;
       padding-right: 12px !important;
-      &.text-center > .tt-select-all {
-        margin-right: -7px;
-      }
       &[data-tt-sort], &[tt-sort] {
         cursor: pointer;
         &:after{

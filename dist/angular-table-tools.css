@@ -18,8 +18,6 @@
   position: relative;
   background-image: none !important;
   padding-right: 12px !important; }
-  .table thead th.text-center > .tt-select-all {
-    margin-right: -7px; }
   .table thead th[data-tt-sort], .table thead th[tt-sort] {
     cursor: pointer; }
     .table thead th[data-tt-sort]:after, .table thead th[tt-sort]:after {
