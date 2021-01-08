@@ -8,14 +8,18 @@
     'use strict';
 
     /**
-	 * @ngdoc component
-	 * @name ttLoading
-	 */
+     * @ngdoc component
+     * @name ttLoading
+     */
     angular.module('tableTools').component('ttLoading', {
         require: {
             tableTools: '^tableTools'
         },
+        bindings: {
+            extraCondition: '<?'
+        },
         controllerAs: 'vm',
-        template: '<span ng-show="vm.tableTools.loading">&nbsp;<i class="fa fa-spinner fa-spin fa-lg"></i></span>',
+        template: '<span ng-show="vm.tableTools.loading || vm.extraCondition">'
+            + '&nbsp;<i class="fa fa-spinner fa-spin fa-lg"></i></span>',
     });
 }());
