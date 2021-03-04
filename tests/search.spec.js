@@ -9,11 +9,11 @@ describe('search', function(){
 
 	describe('search items', function(){
 		const dataSet = [
-			[1, [1, 2, 3, 4, 5], [1]],
+			['1', [1, 2, 3, 4, 5], [1]],
 			["test", ["tes test", 5, 6, 7, 8], ["tes test"]],
 			["test", [{test: "something"}, {something: "test"}], [{something: "test"}]],
 			["test", [{nested: {'object': 'test'}}], [{nested: {'object': 'test'}}]],
-			[1, [{nested: {'object': 1}}], [{nested: {'object': 1}}]]
+			['1', [{nested: {'object': 1}}], [{nested: {'object': 1}}]]
 		];
 		for(let i = 0; i < dataSet.length; i++){
 			const search = dataSet[i][0];
