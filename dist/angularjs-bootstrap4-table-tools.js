@@ -1628,6 +1628,8 @@ __webpack_require__.r(__webpack_exports__);
  *  Copyright (c) 2016-2021 Rodziu <mateusz.rohde@gmail.com>
  *  License: MIT
  */
+class TtRowPlaceholderDirectiveController {
+}
 function ttRowPlaceholderDirective() {
     return {
         restrict: 'A',
@@ -1636,6 +1638,7 @@ function ttRowPlaceholderDirective() {
         },
         controllerAs: 'vm',
         bindToController: true,
+        controller: TtRowPlaceholderDirectiveController,
         scope: true,
         template: '<td colspan="100%" ng-if="!vm.tableTools.data.length">'
             + '<tt-loading></tt-loading>'

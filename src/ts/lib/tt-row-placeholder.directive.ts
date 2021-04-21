@@ -4,8 +4,12 @@
  *  License: MIT
  */
 
-
 import {IDirective} from 'angular';
+import {TableToolsController} from 'ts/lib/table-tools.directive';
+
+class TtRowPlaceholderDirectiveController {
+    tableTools: TableToolsController;
+}
 
 export function ttRowPlaceholderDirective(): IDirective {
     return {
@@ -15,6 +19,7 @@ export function ttRowPlaceholderDirective(): IDirective {
         },
         controllerAs: 'vm',
         bindToController: true,
+        controller: TtRowPlaceholderDirectiveController,
         scope: true,
         template: '<td colspan="100%" ng-if="!vm.tableTools.data.length">'
             + '<tt-loading></tt-loading>'
