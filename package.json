@@ -1,6 +1,6 @@
 {
   "name": "angularjs-bootstrap4-table-tools",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "AngularJS TableTools Plugin",
   "main": "dist/angularjs-bootstrap4-table-tools.js",
   "types": "dist/angularjs-bootstrap4-table-tools.d.ts",
