@@ -29,6 +29,7 @@ export declare class TableToolsController implements IController {
     filteredCount: number;
     order?: string | string[];
     perPage: number;
+    scroll: boolean;
     perPageOptions: IPerPageOption[];
     ttUrl?: string;
     ttResolver: TableToolsResolver;

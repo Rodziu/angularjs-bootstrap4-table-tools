@@ -50,6 +50,7 @@ export class TableToolsController implements IController {
     public filteredCount = 0;
     public order?: string | string[];
     public perPage: number;
+    public scroll: boolean;
     public perPageOptions: IPerPageOption[];
     public ttUrl?: string;
     public ttResolver: TableToolsResolver;
@@ -91,6 +92,9 @@ export class TableToolsController implements IController {
     $onInit(): void {
         if (angular.isUndefined(this.perPage)) {
             this.perPage = this.tableToolsOptions.perPage;
+        }
+        if (angular.isUndefined(this.scroll)) {
+            this.scroll = this.tableToolsOptions.scroll;
         }
         if (angular.isUndefined(this.perPageOptions)) {
             this.perPageOptions = this.tableToolsOptions.perPageOptions;
@@ -220,13 +224,15 @@ export class TableToolsController implements IController {
         if (originalPage !== this.pagination.page) {
             this.filterData();
         }
-        this.scrollTo(
-            Math.round(
-                this.$element[0].getBoundingClientRect().top
-                + (this.$window.pageYOffset || this.$document[0].documentElement.scrollTop)
-            ) + this.tableToolsOptions.scrollOffset,
-            1000
-        );
+        if (this.scroll) {
+            this.scrollTo(
+                Math.round(
+                    this.$element[0].getBoundingClientRect().top
+                    + (this.$window.pageYOffset || this.$document[0].documentElement.scrollTop)
+                ) + this.tableToolsOptions.scrollOffset,
+                1000
+            );
+        }
     }
 
     private scrollTo(target: number, duration: number): void {
@@ -263,6 +269,7 @@ export function tableToolsDirective(): IDirective {
         bindToController: {
             tableTools: '<',
             perPage: '<',
+            scroll: '<',
             perPageOptions: '<',
             order: '=?',
             ttUrl: '@',

@@ -62,6 +62,7 @@ export type TableToolsResolver = (
 
 export class TableToolsProvider implements IServiceProvider {
     public perPage = 25;
+    public scroll = true;
     public perPageOptions: IPerPageOption[] = [
         {number: 10, text: '10'},
         {number: 25, text: '25'},

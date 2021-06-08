@@ -1192,6 +1192,9 @@ class TableToolsController {
         if (angular__WEBPACK_IMPORTED_MODULE_0__.isUndefined(this.perPage)) {
             this.perPage = this.tableToolsOptions.perPage;
         }
+        if (angular__WEBPACK_IMPORTED_MODULE_0__.isUndefined(this.scroll)) {
+            this.scroll = this.tableToolsOptions.scroll;
+        }
         if (angular__WEBPACK_IMPORTED_MODULE_0__.isUndefined(this.perPageOptions)) {
             this.perPageOptions = this.tableToolsOptions.perPageOptions;
         }
@@ -1313,8 +1316,10 @@ class TableToolsController {
         if (originalPage !== this.pagination.page) {
             this.filterData();
         }
-        this.scrollTo(Math.round(this.$element[0].getBoundingClientRect().top
-            + (this.$window.pageYOffset || this.$document[0].documentElement.scrollTop)) + this.tableToolsOptions.scrollOffset, 1000);
+        if (this.scroll) {
+            this.scrollTo(Math.round(this.$element[0].getBoundingClientRect().top
+                + (this.$window.pageYOffset || this.$document[0].documentElement.scrollTop)) + this.tableToolsOptions.scrollOffset, 1000);
+        }
     }
     scrollTo(target, duration) {
         const cur = this.$window.scrollY, start = performance.now(), step = (ts) => {
@@ -1348,6 +1353,7 @@ function tableToolsDirective() {
         bindToController: {
             tableTools: '<',
             perPage: '<',
+            scroll: '<',
             perPageOptions: '<',
             order: '=?',
             ttUrl: '@',
@@ -1438,6 +1444,7 @@ __webpack_require__.r(__webpack_exports__);
 class TableToolsProvider {
     constructor() {
         this.perPage = 25;
+        this.scroll = true;
         this.perPageOptions = [
             { number: 10, text: '10' },
             { number: 25, text: '25' },

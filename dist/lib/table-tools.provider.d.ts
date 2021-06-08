@@ -45,6 +45,7 @@ export declare type TableToolsResolver = (limit: number, offset: number, order: 
 }, url: string) => IPromise<ITableToolsResponse>;
 export declare class TableToolsProvider implements IServiceProvider {
     perPage: number;
+    scroll: boolean;
     perPageOptions: IPerPageOption[];
     scrollOffset: number;
     lang: ITableToolsLang;
